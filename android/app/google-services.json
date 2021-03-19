@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "746194663577",
+    "project_id": "vacpass-3aa8e",
+    "storage_bucket": "vacpass-3aa8e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:746194663577:android:7220c4aa9362d5c6536008",
+        "android_client_info": {
+          "package_name": "com.example.vacpass_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "746194663577-3enqtibqg2v5ldltc568938obvb0pkpr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAhp_T9YQiPIAJQCMOt82noqsg0yIW3D7g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "746194663577-3enqtibqg2v5ldltc568938obvb0pkpr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
