@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:vacpass_app/src/screens/ValidatorFunction.dart';
-
+import 'ValidatorFunction.dart';
+// ignore: must_be_immutable
 class CustomTextField extends StatefulWidget{
 
   final String action;
@@ -13,7 +13,9 @@ class CustomTextField extends StatefulWidget{
   @override 
   CustomInputField createState()=> CustomInputField();
 }
+
 class CustomInputField extends State<CustomTextField>{
+   
   Icon iconStyle(){
     if(widget.action == 'email') return Icon(Icons.email, color: Colors.purple[300]);
     if(widget.action == 'password') return Icon(Icons.lock, color: Colors.purple[300]);
@@ -26,10 +28,8 @@ class CustomInputField extends State<CustomTextField>{
     if(widget.action == 'placevaccined') return Icon(Icons.add_location, color: Colors.purple[300]);
     if(widget.action == 'licensenumber') return Icon(Icons.credit_card, color: Colors.purple[300]);
     if(widget.action == 'manufacturer') return Icon(Icons.business, color: Colors.purple[300]);
+    return null;
   }
-  // Icon suffixIcon(){
-  //   if(widget.action == 'password') return Icon(Icons.visibility, color: Colors.purple[300]);
-  // }
 
   @override
   Widget build(BuildContext context){
@@ -72,11 +72,10 @@ class CustomInputField extends State<CustomTextField>{
               suffixIcon: widget.action == "password" ? viewIcon() : null,
             ),
           ),
-         )
+        )
       ],
     );
   }
-
   IconButton viewIcon (){
     return IconButton(
       onPressed:  (){setState(() {widget.obs = !widget.obs; });},

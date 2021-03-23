@@ -4,14 +4,16 @@ import 'dart:async';
 import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import '../Services/firebaseservice.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:geocoder/model.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:minimize_app/minimize_app.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import '../CustomTextField.dart';
+import 'package:vacpass_app/src/screens/Services/ValidatorFunction.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:qrscan/qrscan.dart' as scanner;
 
@@ -24,7 +26,7 @@ class VerifierHomeScreen extends State<Verifier> {
 
  final auth = FirebaseAuth.instance;
  final db = FirebaseFirestore.instance;
- Map data;
+ Map data,dat;
  final TextEditingController brandNumber = new TextEditingController();
  final TextInputType keyType = TextInputType.number;
 
@@ -49,21 +51,39 @@ Future<void> searchVaccineNumber()async{
         width: MediaQuery.of(context).size.width / 1.5,
         height: MediaQuery.of(context).size.height / 3,
         child: Center(
-          child: Column(
+          child: Column( 
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Text('Enter Vaccine number',style: TextStyle(color: Colors.pinkAccent,fontSize: 24)),
-                CustomTextField(brandNumber, keyType, 'Brand number', 'brandnumber', false),
-                RaisedButton(
-                  color: Colors.pinkAccent,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(5)),
-                  ),
-                  onPressed: (){
-                    searchVacc();
-                    Navigator.of(context).pop();
-                  },
-                  child: Text('SEARCH',style: TextStyle(color: Colors.white),),
+                textCustom('Brand number', 'brandnumber', brandNumber),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    // ignore: deprecated_member_use
+                    RaisedButton(
+                      color: Colors.pinkAccent,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(5)),
+                      ),
+                      onPressed: (){
+                        brandNumber.clear();
+                        Navigator.of(context).pop();
+                      },
+                      child: Text('Cancel',style: TextStyle(color: Colors.white),),
+                    ),
+                    // ignore: deprecated_member_use
+                    RaisedButton(
+                      color: Colors.pinkAccent,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(5)),
+                      ),
+                      onPressed: (){
+                        searchVacc();
+                        Navigator.of(context).pop();
+                      },
+                      child: Text('SEARCH',style: TextStyle(color: Colors.white),),
+                    ),
+                  ],
                 )
               ],
             ),
@@ -72,88 +92,134 @@ Future<void> searchVaccineNumber()async{
     );
   });
 }
+
+ Widget textCustom(String labels, String action,TextEditingController controller){
+    return 
+      Padding(
+        padding: const EdgeInsets.all(1),
+        child: 
+          Container(
+            padding: EdgeInsets.only(left:20,right:20),
+            child: TextFormField(
+              controller: controller,
+              style: GoogleFonts.poppins(textStyle: TextStyle(fontSize:16,),),
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: labels,
+                hintStyle: GoogleFonts.poppins(textStyle: TextStyle(color: Colors.grey,fontSize:16),),
+                suffixIcon: Icon(Icons.format_list_numbered),
+              ),
+              validator: (String value){ return ValidatorFunction(action).validate(value);},
+              onChanged: (value){
+              },
+            ),
+          ),
+      );
+  }
+
 Future<void> searchVacc() async {
-  try{
-    await db.
-    collection('users').
-    where('Brand_number',isEqualTo: brandNumber.text).
-    get().
+
+  pos = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+  GeoPoint point = GeoPoint(pos.latitude,pos.longitude);
+  Coordinates coordinates = new Coordinates(pos.latitude,pos.longitude);
+  coordinatesToAddress(coordinates).then((value) => { addr = value });
+
+  setState(() {
+  try{          
+    DatabaseService().
+    getVerification(brandNumber.text).
     then((doc) =>  {
-      doc.docs.map((DocumentSnapshot document) => {
-        print(document.data()['Brand_name']),
-        showDialog(context: context, builder: (context){
+      doc.docs.forEach((DocumentSnapshot document) { showDialog(context: context, builder: (context){
           return Dialog(
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(5)),
             ),
             child: 
               Container(
-                width: MediaQuery.of(context).size.width / 1.5,
-                height: MediaQuery.of(context).size.height / 3,
+                width: MediaQuery.of(context).size.width / 2,
+                height: MediaQuery.of(context).size.height / 2,
                 alignment: Alignment.center,
                 child:Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
-                          Row(
+                          Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Text('Manufacturer :',style: TextStyle(color: Colors.grey,fontSize: 18),),
-                              Text(document.data()['M_Brand'],style: TextStyle(color: Colors.grey,fontSize: 20),),
+                              Text(document['M_Brand'],style: GoogleFonts.poppins(textStyle: TextStyle(color: Colors.pinkAccent,fontSize: 20),),),
+                              Text('Manufacturer',style: TextStyle(color: Colors.grey,fontSize: 14),),
                             ]
                           ),
-                          Row(
+                          Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Text('Brand Name :',style: TextStyle(color: Colors.grey,fontSize: 18),),
-                              Text(document.data()['Brand_name'],style: TextStyle(color: Colors.grey,fontSize: 20),),
+                              Text(document['Brand_name'],style: GoogleFonts.poppins(textStyle: TextStyle(color: Colors.pinkAccent,fontSize: 20),),),
+                              Text('Brand Name',style: TextStyle(color: Colors.grey,fontSize: 14),),
                             ]
                           ),
-                          Row(
+                          Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Text('Brand no. :',style: TextStyle(color: Colors.grey,fontSize: 18),),
-                              Text(document.data()['Brand_number'],style: TextStyle(color: Colors.grey,fontSize: 20),),
+                              Text(document['Brand_number'].toString(),style: GoogleFonts.poppins(textStyle: TextStyle(color: Colors.pinkAccent,fontSize: 20),),),
+                              Text('Brand no.',style: TextStyle(color: Colors.grey,fontSize: 14),),
                             ]
                           ),
-                          Row(
+                          Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Text('Physician Name :',style: TextStyle(color: Colors.grey,fontSize: 18),),
-                              Text(document.data()['Physician_name'],style: TextStyle(color: Colors.grey,fontSize: 20),),
+                              Text(document['Physician_name'],style: GoogleFonts.poppins(textStyle: TextStyle(color: Colors.pinkAccent,fontSize: 20),),),
+                              Text('Physician Name',style: TextStyle(color: Colors.grey,fontSize: 14),),
                             ]
                           ),
-                          Row(
+                          Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Text('License no. :',style: TextStyle(color: Colors.grey,fontSize: 18),),
-                              Text(document.data()['License_no'],style: TextStyle(color: Colors.grey,fontSize: 20),),
+                              Text(document['License_no'],style: GoogleFonts.poppins(textStyle: TextStyle(color: Colors.pinkAccent,fontSize: 20),),),
+                              Text('License no.',style: TextStyle(color: Colors.grey,fontSize: 14),),
                             ]
                           ),
-                          document.data()['Status'] == 'true' ? confirmedPass() : rejectPass(),
+                          SizedBox(height: MediaQuery.of(context).size.height * 0.04,),
+                          confirmedPass(),
+                          // ignore: deprecated_member_use
                           RaisedButton(
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.all(Radius.circular(5)),
                             ),
                             onPressed: (){
+                                try{
+                                  db
+                                  .collection('VacpassHistory')
+                                  .add({
+                                    'Passenger_uid': document.id,
+                                    'Verifier_uid': auth.currentUser.uid,
+                                    'Date': DateTime.now(),
+                                    'Location': point,
+                                    'Address': addr.addressLine,
+                                  });
+                                } on Exception {
+                                  print('failed');
+                                }
                                 Navigator.of(context).pop(); 
                             },
                             color: Colors.green[700],
-                            child: Text('Close'),
+                            child: Text('Close',style: GoogleFonts.poppins(textStyle: TextStyle(color: Colors.white,fontSize: 16),),),
                           )
                         ],
                       ),
                     ),
               ),
           );
-        }),
+        });
       }),
-      
-    }).catchError((onError) => print('ID does not exist'));
-  } on Exception{
-    print('ID not found');
+    // ignore: return_of_invalid_type_from_catch_error
+    }).catchError((onError) => print(onError.toString()+'happen'));
+  } on Exception catch(e){
+    print(e.toString());
   }
+  });
 }
+//END OF SEARCH BY BRAND NUMBER.
+
 Future<void> scan() async{
      await checkPermission();
   try{
@@ -166,7 +232,7 @@ Future<void> scan() async{
       setState(() {
         var code = barcode.split('.');
         uid = code[0];
-
+        print(code[6]);
           showDialog(context: context, builder: (context){
             return Dialog(
                 shape: RoundedRectangleBorder(
@@ -179,42 +245,44 @@ Future<void> scan() async{
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
-                          Row(
+                          Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Text('Manufacturer :',style: TextStyle(color: Colors.grey,fontSize: 18),),
-                              Text(code[1],style: TextStyle(color: Colors.grey,fontSize: 20),),
+                              Text(code[1],style: GoogleFonts.poppins(textStyle: TextStyle(color: Colors.pinkAccent,fontSize: 20),),),
+                              Text('Manufacturer',style: TextStyle(color: Colors.grey,fontSize: 14),),
                             ]
                           ),
-                          Row(
+                          Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Text('Brand Name :',style: TextStyle(color: Colors.grey,fontSize: 18),),
-                              Text(code[2],style: TextStyle(color: Colors.grey,fontSize: 20),),
+                              Text(code[2],style: GoogleFonts.poppins(textStyle: TextStyle(color: Colors.pinkAccent,fontSize: 20),),),
+                              Text('Brand Name',style: TextStyle(color: Colors.grey,fontSize: 14),),
                             ]
                           ),
-                          Row(
+                          Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Text('Brand no. :',style: TextStyle(color: Colors.grey,fontSize: 18),),
-                              Text(code[3],style: TextStyle(color: Colors.grey,fontSize: 20),),
+                              Text(code[3].toString(),style: GoogleFonts.poppins(textStyle: TextStyle(color: Colors.pinkAccent,fontSize: 20),),),
+                              Text('Brand no.',style: TextStyle(color: Colors.grey,fontSize: 14),),
                             ]
                           ),
-                          Row(
+                          Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Text('Physician Name :',style: TextStyle(color: Colors.grey,fontSize: 18),),
-                              Text(code[4],style: TextStyle(color: Colors.grey,fontSize: 20),),
+                              Text(code[4],style: GoogleFonts.poppins(textStyle: TextStyle(color: Colors.pinkAccent,fontSize: 20),),),
+                              Text('Physician Name',style: TextStyle(color: Colors.grey,fontSize: 14),),
                             ]
                           ),
-                          Row(
+                          Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Text('License no. :',style: TextStyle(color: Colors.grey,fontSize: 18),),
-                              Text(code[5],style: TextStyle(color: Colors.grey,fontSize: 20),),
+                              Text(code[5],style: GoogleFonts.poppins(textStyle: TextStyle(color: Colors.pinkAccent,fontSize: 20),),),
+                              Text('License no.',style: TextStyle(color: Colors.grey,fontSize: 14),),
                             ]
                           ),
-                          code[6] == 'true' ? confirmedPass() : rejectPass(),
+                          SizedBox(height: MediaQuery.of(context).size.height * 0.04,),
+                          confirmedPass(),
+                          // ignore: deprecated_member_use
                           RaisedButton(
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.all(Radius.circular(5)),
@@ -283,18 +351,6 @@ Future<void> scan() async{
       );
   }
 
-  Widget rejectPass(){
-    return 
-      Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text('Reject ',style: TextStyle(color: Colors.green[700],fontSize: 18),),
-          Icon(Icons.close_fullscreen_sharp, color: Colors.green[700],),
-        ]
-      );
-  }
-
-
   @override
   Widget build(BuildContext context) {
      return Container(
@@ -343,9 +399,6 @@ Future<void> scan() async{
                             children: [
                               SizedBox(height: MediaQuery.of(context).size.height * 0.01),
                               Text(data['F_name'] +' '+ data['L_name'], style: TextStyle(fontSize: 22),),
-                              FlatButton(onPressed: (){},
-                              child: Text('View Profile',style: TextStyle(color: Colors.grey,),)
-                              ),
                             ],
                           ),
                           Center(
@@ -362,16 +415,14 @@ Future<void> scan() async{
                                   width:MediaQuery.of(context).size.width/1.5,
                                   height:40,
                                   child: 
-                                   ElevatedButton(
-                                      style: ElevatedButton.styleFrom(
-                                          // background color
-                                          primary: Colors.pinkAccent,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.all(Radius.circular(30)),
-                                          ),
-                                        ),
-                                      child: Text('Scan a code',style: TextStyle(color: Colors.white),),
-                                      onPressed: scan, 
+                                    // ignore: deprecated_member_use
+                                    RaisedButton(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.all(Radius.circular(30)),
+                                      ),
+                                      color: Colors.pinkAccent,
+                                      onPressed: scan,
+                                      child: Text('SCAN QR CODE',style: TextStyle(color: Colors.white),),
                                     ),
                                 ),
                                 SizedBox(height:MediaQuery.of(context).size.height * 0.02),
@@ -379,14 +430,12 @@ Future<void> scan() async{
                                   width:MediaQuery.of(context).size.width/1.5,
                                   height:40,
                                   child: 
-                                    ElevatedButton(
-                                       style: ElevatedButton.styleFrom(
-                                          // background color
-                                          primary: Colors.pinkAccent,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.all(Radius.circular(30)),
-                                          ),
-                                        ),
+                                    // ignore: deprecated_member_use
+                                    RaisedButton(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.all(Radius.circular(30)),
+                                      ),
+                                      color: Colors.pinkAccent,
                                       onPressed: searchVaccineNumber,
                                       child: Text('SEARCH VACCINE NO.',style: TextStyle(color: Colors.white),),
                                     ),
@@ -408,8 +457,10 @@ Future<void> scan() async{
   }
 }
 
+// ignore: missing_return
 Widget animate(){
   @override 
+  // ignore: unused_element
   Widget build(BuildContext context){
     Timer(Duration(seconds: 2),()=> print('reloads'));
     return Scaffold(

@@ -3,7 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:vacpass_app/src/route.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:vacpass_app/src/screens/CustomTextField.dart';
+import './Services/CustomTextField.dart';
+import './Services/userclass.dart';
 import '../route.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -55,6 +56,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
   bool obs = true;
 
 
+  String convertDate(DateTime _datevaccined){
+    return _datevaccined.month.toString() +'/'+ _datevaccined.day.toString() + '/' + _datevaccined.year.toString();
+  }
 Widget buildDateVaccined() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -75,11 +79,11 @@ Widget buildDateVaccined() {
                   ),
                   height: 60,
                   child: TextFormField(
-                    keyboardType: TextInputType.datetime,
+                    keyboardType: TextInputType.name,
                     style: TextStyle(
                       color: Colors.black87,
                     ),
-                    controller: _dateVController,enableInteractiveSelection: false,
+                    controller: _dateVController,
                     decoration: InputDecoration(
                       border: InputBorder.none,
                       contentPadding: EdgeInsets.only(top: 14),
@@ -100,8 +104,8 @@ Widget buildDateVaccined() {
                           lastDate: DateTime.now()
                         ).then((value) =>
                            setState(() {
-                             _dateVacined = value;
-                            _dateVController..text = convertDate(value);
+                            _dateVacined = value;
+                            _dateVController..text = convertDate(_dateVacined) ;
                             if(_dateVController.text.isNotEmpty) setState(() {_datevaccinedlabel = 'Date of Vaccination'; });
                             if(_dateVController.text.isEmpty) setState(() {_datevaccinedlabel = ''; });
                           })
@@ -151,41 +155,24 @@ Widget buildlastRTPCR() {
                   Icons.date_range_sharp,
                   color: Colors.purple[300]
                 ),
-                suffixIcon: IconButton(
-                  onPressed:  (){ 
-                    showDatePicker(
-                      context: context, 
-                      initialDate: DateTime.now(), 
-                      firstDate: DateTime(2020), 
-                      lastDate: DateTime.now()
-                    ).then((value) =>
-                        setState(() {
-                          _lastRTPCR = value;
-                        _dateController..text = convertDate(value);
-                        if(_dateController.text.isNotEmpty) setState(() {_lastrtpcrlabel = 'Last RT PCR Date'; });
-                      })
-                    );
-                  },
-                  icon:  Icon(Icons.calendar_today),
-                ),
                 hintText: this._lastrtpcrlabel,
                 hintStyle: TextStyle(
                   color: Colors.black38
                 )
               ),
               onTap: () {
-                     showDatePicker(
-                          context: context, 
-                          initialDate: DateTime.now(), 
-                          firstDate: DateTime(2020), 
-                          lastDate: DateTime.now()
-                        ).then((value) =>
-                           setState(() {
-                            _dateVController..text = convertDate(value);
-                            if(_dateVController.text.isNotEmpty) setState(() {_lastrtpcrlabel = 'Date of Vaccination'; });
-                            if(_dateVController.text.isEmpty) setState(() {_lastrtpcrlabel = ''; });
-                          })
-                   );
+                  showDatePicker(
+                    context: context, 
+                    initialDate: DateTime.now(), 
+                    firstDate: DateTime(2020), 
+                    lastDate: DateTime.now()
+                  ).then((value) =>
+                      setState(() {
+                      _lastRTPCR = value;
+                      _dateController..text = convertDate(_lastRTPCR) ;
+                      if(_dateController.text.isNotEmpty) setState(() {_lastrtpcrlabel = 'Last RT PCR Date'; });
+                    })
+                  );
               },
               validator: (String value) {
                 if (value.isEmpty) return 'Date of Last RT-PCR is Required';
@@ -197,12 +184,8 @@ Widget buildlastRTPCR() {
     );
 }
 
-String convertDate(DateTime _datevaccined){
-  return _datevaccined.month.toString() +'/'+ _datevaccined.day.toString() + '/' + _datevaccined.year.toString();
-}
 
 Widget buildconfirmpassword() {
-  
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -222,7 +205,7 @@ Widget buildconfirmpassword() {
           ),
           height: 60,
           child: TextFormField(
-            obscureText:obs,
+            obscureText: obs,
             controller: _confirmpassword,
             style: TextStyle(
               color: Colors.black87,
@@ -264,6 +247,7 @@ Widget buildSignInBtn(){
     padding: EdgeInsets.symmetric( vertical: 20),
     width: double.infinity,
     child: 
+      // ignore: deprecated_member_use
       RaisedButton(
         padding: EdgeInsets.all(12.0),
         shape: RoundedRectangleBorder(
@@ -283,25 +267,36 @@ Widget buildSignInBtn(){
             try{
               auth.createUserWithEmailAndPassword(email: _email.text,password: _password.text).then((_){
 
-                users
-                .doc(auth.currentUser.uid)
-                .set({
-                    'role': 'passenger',
-                    'L_name': _lastName.text,
-                    'F_name': _firstName.text,
-                    'Address': _address.text,
-                    'M_Brand': _mbrand.text,
-                    'Brand_name': _brandName.text,
-                    'Brand_number': _brandNumber.text,
-                    'Date_of_Vaccination': _dateVacined,
-                    'Placed_vacined': _placeVacined.text,
-                    'Physician_name': _physicianName.text,
-                    'License_no': _licenseNumber.text,
-                    'RT_PCR_Date': _lastRTPCR,
-                  }).then((value) =>
-                      Navigator.of(context).pushNamed(AppRoutes.authHome)
-                      
+                UserData user = new 
+                UserData( 
+                  auth.currentUser.uid, 
+                  _firstName.text, 
+                  _lastName.text, 
+                  _address.text, 
+                  _mbrand.text, 
+                  _brandName.text, 
+                  int.parse(_brandNumber.text), 
+                  _dateVController.text , 
+                  _placeVacined.text, 
+                  _physicianName.text, 
+                  _dateController.text, 
+                  _licenseNumber.text
                   );
+                  bool stat = user.addPassengerInfo(context);
+                  
+                  if(stat) {
+                    _firstName.clear();
+                    _lastName.clear();
+                    _address.clear();
+                    _mbrand.clear();
+                    _brandName.clear();
+                    _brandNumber.clear();
+                    _dateVController.clear();
+                    _placeVacined.clear();
+                    _physicianName.clear(); 
+                    _dateController.clear(); 
+                    _licenseNumber.clear();
+                  }
               });
             } on FirebaseAuthException catch(e){
               print(e.message);
@@ -316,6 +311,7 @@ Widget buildCancelBtn(){
   return Container(
     width: double.infinity,
     child: 
+      // ignore: deprecated_member_use
       RaisedButton(
         padding: EdgeInsets.all(12.0),
         shape: RoundedRectangleBorder(
@@ -331,6 +327,7 @@ Widget buildCancelBtn(){
           ),
         ),
         onPressed: (){
+          Navigator.of(context).pop();
           Navigator.of(context).pushNamed(AppRoutes.authLogin);
         },
     )
@@ -359,9 +356,9 @@ Widget buildCancelBtn(){
                     end: Alignment.bottomCenter,
                     colors: [
                       Colors.pinkAccent,
-                      Colors.pink,
-                      Colors.purple[300],
-                      Colors.purpleAccent,
+                      Colors.pinkAccent,
+                      Colors.pinkAccent,
+                      Colors.pinkAccent,
                     ]
                   )
                 ),

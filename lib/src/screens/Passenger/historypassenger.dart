@@ -5,10 +5,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-// import 'package:intl/intl_browser.dart';
-
+import '../Services/firebaseservice.dart';
 
 class HistoryPassenger extends StatefulWidget{
   @override 
@@ -48,11 +47,12 @@ class HistoryView extends State<HistoryPassenger>{
    }
    return monthname;
  }
+ 
   @override
   Widget build(BuildContext context) {
 
     return StreamBuilder<QuerySnapshot>(
-      stream: users.snapshots(),
+      stream: DatabaseService().getHistory(),
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (snapshot.hasError) {
           return Text('Something went wrong');
@@ -67,19 +67,23 @@ class HistoryView extends State<HistoryPassenger>{
             Scaffold(
               appBar: 
                 AppBar(
-                  title: Text('History', style: TextStyle(color: Colors.pinkAccent,fontSize: 28),), 
+                  title: Text('History', style: GoogleFonts.poppins(textStyle: TextStyle(color: Colors.pinkAccent,fontSize: 28),)), 
                   automaticallyImplyLeading: false, 
                   backgroundColor: Colors.white,
                   elevation: 0,
                 ),
               body: Column(
                 children: snapshot.data.docs.map((DocumentSnapshot document) {
-                  return Card(
-                    child: new ListTile(
-                      title: new Text(convertDate(document.data()['Date'])),
-                      subtitle: new Text(document.data()['Address']),
-                    ),
-                  );
+                  if(document.data()['Passenger_uid'] == auth.currentUser.uid)
+                    return Card(
+                      color: Colors.pinkAccent.shade200,
+                      child: new ListTile(
+                        title: new Text(convertDate(document.data()['Date']),style: GoogleFonts.poppins(textStyle: TextStyle(color: Colors.white,fontSize: 16),)),
+                        subtitle: new Text(document.data()['Address'],style: GoogleFonts.poppins(textStyle: TextStyle(color: Colors.grey[300],fontSize: 14),)),
+                      ),
+                    );
+                  else
+                    return Container();
                 }).toList(),
               ),
             ),
@@ -91,8 +95,10 @@ class HistoryView extends State<HistoryPassenger>{
   
 }
 
+// ignore: missing_return
 Widget animate(){
   @override 
+  // ignore: unused_element
   Widget build(BuildContext context){
     Timer(Duration(seconds: 2),()=> Navigator.of(context).pop());
     return Scaffold(

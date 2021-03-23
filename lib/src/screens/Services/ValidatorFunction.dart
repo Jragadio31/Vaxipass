@@ -6,7 +6,15 @@ class ValidatorFunction{
   String validate(value){
     if(action == 'email') return validateEmail(value);
     if(action == 'password') return validatePassword(value);
-    
+    if(action == 'firstname') return validateFirstName(value);
+    if(action == 'lastname') return validateLastName(value);
+    if(action == 'address') return validateAddress(value);
+    if(action == 'brandname') return validateBrandName(value);
+    if(action == 'brandnumber') return validateBrandNumber(value);
+    if(action == 'physician') return validatePhysician(value);
+    if(action == 'placevaccined') return validatePlaceVaccined(value);
+    if(action == 'licensenumber') return validateLicenseNumber(value);
+    if(action == 'manufacturer') return validateManufacturer(value);
     return null;
   }
   

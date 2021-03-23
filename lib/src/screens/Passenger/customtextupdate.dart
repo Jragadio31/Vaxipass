@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:vacpass_app/src/screens/ValidatorFunction.dart';
+import '../Services/ValidatorFunction.dart';
 
 class Custom extends StatefulWidget{
   final String action;

@@ -1,9 +1,8 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:vacpass_app/src/screens/CustomTextField.dart';
+import './CustomTextField.dart';
 import './FirebaseService.dart';
-import '../route.dart';
+import '../../route.dart';
 
 
 class ForgetPasswordScreen extends StatefulWidget {
@@ -21,7 +20,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
  final TextEditingController _email = TextEditingController();
 
  final TextInputType keyPass = TextInputType.text;
- TextEditingController _password = TextEditingController();
+//  TextEditingController _password = TextEditingController();
 
 
 
@@ -31,7 +30,13 @@ Widget buildResetPasswordBtn(){
     width: double.infinity,
     child: 
       ElevatedButton(
-        
+        style: ElevatedButton.styleFrom(
+            primary: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(30)),
+            ),
+            ),
+
         child: Text(
           'Reset Password',
           style: TextStyle(
@@ -55,7 +60,7 @@ Widget buildCancelBtn(){
     child: 
       ElevatedButton(
          style: ElevatedButton.styleFrom(
-            primary: Colors.pinkAccent,
+            primary: Colors.white,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(30)),
             ),

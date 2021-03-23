@@ -1,9 +1,8 @@
 
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:vacpass_app/src/screens/userclass.dart';
+import 'package:vacpass_app/src/screens/Services/firebaseservice.dart';
+import '../Verifier/verifierSettings.dart';
 import 'dashboardpassenger.dart';
 import 'profilepassenger.dart';
 import 'historypassenger.dart';
@@ -20,47 +19,50 @@ class _PassScreen extends State<Passenger> {
     Dashboard(),
     HistoryPassenger(),
     Profile(),
+    Settings(),
   ];
 
   @override 
   Widget build(BuildContext context){
-    return Scaffold(
-      // appBar: AppBar(
-      //     // backgroundColor: Colors.white,
-      //     // shadowColor: Colors.white,
-      //     title:Text(''),
-      //     automaticallyImplyLeading: false,),
-      body: Scaffold(
-          body: Container(
-              child:_widgetOptions.elementAt(_selectedIndex),)),
-              bottomNavigationBar: 
-                BottomNavigationBar(
-                  selectedItemColor: Colors.pinkAccent,
-                  
-                  items: [
-                      BottomNavigationBarItem(
+    return WillPopScope(
+      onWillPop: DatabaseService().onWillPop,
+      child: Scaffold(
+          body: Scaffold(
+              body: Container(
+                  child:_widgetOptions.elementAt(_selectedIndex),)
+          ),
+          bottomNavigationBar: 
+                    BottomNavigationBar(
+                      unselectedItemColor: Colors.grey,
+                      selectedItemColor: Colors.pinkAccent,
+                      backgroundColor: Colors.white,
+                      
+                      items: [
+                        BottomNavigationBarItem(
                           icon: Icon(Icons.dashboard),
                           label: 'Dashboard',
-                          backgroundColor: Colors.pinkAccent,
+                        ),
+                        BottomNavigationBarItem(
+                          icon: Icon(Icons.history),
+                          label: 'Scan History',
+                        ),
+                        BottomNavigationBarItem(
+                          icon: Icon(Icons.person),
+                          label: 'Profile',
+                        ),
+                        BottomNavigationBarItem(
+                          icon: Icon(Icons.settings),
+                          label: 'Setting',
+                        ),
+                      ],
+                      currentIndex:  _selectedIndex,
+                      onTap: (index){
+                        setState(() {
+                          _selectedIndex = index;
+                        });
+                      },
                     ),
-                    BottomNavigationBarItem(
-                      icon: Icon(Icons.history),
-                      label: 'Scan History',
-                      backgroundColor: Colors.pinkAccent,
-                    ),
-                    BottomNavigationBarItem(
-                      icon: Icon(Icons.person),
-                      label: 'Profile',
-                      backgroundColor: Colors.pinkAccent,
-                    ),
-                  ],
-                  currentIndex:  _selectedIndex,
-                  onTap: (index){
-                    setState(() {
-                      _selectedIndex = index;
-                    });
-                  },
-                ),
+        ),
     );
   }
 }
