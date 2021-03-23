@@ -71,84 +71,92 @@ class DashboardScreen extends State<Dashboard> {
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
-                                SizedBox(height:20),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    SizedBox(height:150),
-                                    CircleAvatar(
-                                      
-                                      backgroundImage: AssetImage('Images/user.png'),
-                                      radius: 70,
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(height:40),
-                                Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(data['F_name']+' '+data['L_name'],style: GoogleFonts.poppins(textStyle: TextStyle(color: Colors.pinkAccent,fontSize: 20),)),
-                                    Text('Name ',style: GoogleFonts.poppins(textStyle: TextStyle(color: Colors.grey,fontSize: 13),)),
-                                  ],
-                                ),
-                                SizedBox(height:20),
-                                Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(convertDate(data['Date_of_Vaccination']) ,style: GoogleFonts.poppins(textStyle: TextStyle(color: Colors.pinkAccent,fontSize: 20),)),
-                                    Text('Date Vaccined ',style: GoogleFonts.poppins(textStyle: TextStyle(color: Colors.grey,fontSize: 13),),),
-                                  ]
-                                ),
-                                SizedBox(height:20),
-                                Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(data['Placed_vacined'],style: GoogleFonts.poppins(textStyle: TextStyle(color: Colors.pinkAccent,fontSize: 20),)),
-                                    Text('Place Vaccined ',style: GoogleFonts.poppins(textStyle: TextStyle(color: Colors.grey,fontSize: 13),),),
-                                  ]
-                                ),
-                                SizedBox(height:20),
-                                Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text( data['Brand_number'].toString(),style: GoogleFonts.poppins(textStyle: TextStyle(color: Colors.pinkAccent,fontSize: 20),)),
-                                    Text('Vaccine ID',style: GoogleFonts.poppins(textStyle: TextStyle(color: Colors.grey,fontSize: 13),),),
-                                  ]
-                                ),   
-                                SizedBox(height:70),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    FloatingActionButton(
-                                      onPressed: () {
-                                        showDialog(context: context, builder: (context){
-                                              return Dialog(
-                                                child: Container(
-                                                  width: MediaQuery.of(context).size.width / 1.5,
-                                                  height: MediaQuery.of(context).size.height / 3,
-                                                  child:  Center(
-                                                      child: Column(
-                                                        mainAxisAlignment: MainAxisAlignment.center,
-                                                        children: <Widget>[
-                                                            QrImage(
-                                                              data: auth.currentUser.uid+"."+data['M_Brand']+"."+data['Brand_name']+"."+data['Brand_number'].toString()+"."+data['Physician_name']+"."+data['License_no']+'.'+data['Status'].toString(),
-                                                              size: 240,
-                                                              backgroundColor: Colors.white,
-                                                            ),
-                                                        ],),
-                                                    ),
-                                                ),
-                                            );
-                                        });
-                                      },
-                                      child: Icon(
-                                        Icons.qr_code,
-                                        color: Colors.pink,
+                                Expanded(
+                                  flex: 3,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      SizedBox(height:150),
+                                      CircleAvatar(
+                                        
+                                        backgroundImage: AssetImage('Images/user.png'),
+                                        radius: 70,
                                       ),
-                                      backgroundColor: Colors.white,
+                                    ],
                                   ),
-                                  ],
+                                ),
+                                Expanded(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(data['F_name']+' '+data['L_name'],style: GoogleFonts.poppins(textStyle: TextStyle(color: Colors.pinkAccent,fontSize: 20),)),
+                                      Text('Name ',style: GoogleFonts.poppins(textStyle: TextStyle(color: Colors.grey,fontSize: 13),)),
+                                    ],
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(convertDate(data['Date_of_Vaccination']) ,style: GoogleFonts.poppins(textStyle: TextStyle(color: Colors.pinkAccent,fontSize: 20),)),
+                                      Text('Date Vaccined ',style: GoogleFonts.poppins(textStyle: TextStyle(color: Colors.grey,fontSize: 13),),),
+                                    ]
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(data['Placed_vacined'],style: GoogleFonts.poppins(textStyle: TextStyle(color: Colors.pinkAccent,fontSize: 20),)),
+                                      Text('Place Vaccined ',style: GoogleFonts.poppins(textStyle: TextStyle(color: Colors.grey,fontSize: 13),),),
+                                    ]
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text( data['Brand_number'].toString(),style: GoogleFonts.poppins(textStyle: TextStyle(color: Colors.pinkAccent,fontSize: 20),)),
+                                      Text('Vaccine ID',style: GoogleFonts.poppins(textStyle: TextStyle(color: Colors.grey,fontSize: 13),),),
+                                    ]
+                                  ),
+                                ),   
+                                Expanded(
+                                  flex: 2,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      FloatingActionButton(
+                                        onPressed: () {
+                                          showDialog(context: context, builder: (context){
+                                                return Dialog(
+                                                  child: Container(
+                                                    width: MediaQuery.of(context).size.width / 1.5,
+                                                    height: MediaQuery.of(context).size.height / 3,
+                                                    child:  Center(
+                                                        child: Column(
+                                                          mainAxisAlignment: MainAxisAlignment.center,
+                                                          children: <Widget>[
+                                                              QrImage(
+                                                                data: auth.currentUser.uid+"."+data['M_Brand']+"."+data['Brand_name']+"."+data['Brand_number'].toString()+"."+data['Physician_name']+"."+data['License_no']+'.'+data['Status'].toString(),
+                                                                size: 240,
+                                                                backgroundColor: Colors.white,
+                                                              ),
+                                                          ],),
+                                                      ),
+                                                  ),
+                                              );
+                                          });
+                                        },
+                                        child: Icon(
+                                          Icons.qr_code,
+                                          color: Colors.pink,
+                                        ),
+                                        backgroundColor: Colors.white,
+                                    ),
+                                    ],
+                                  ),
                                 ),
                               ],
                             ),

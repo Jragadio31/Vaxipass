@@ -1,13 +1,11 @@
 
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
 import './Services/CustomTextField.dart';
 import 'Services/firebaseservice.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../route.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 
 class LoginScreen extends StatefulWidget {
@@ -20,12 +18,12 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
 
+  final auth = FirebaseAuth.instance;
  final TextInputType keyEmail = TextInputType.emailAddress;
  final TextEditingController _email = TextEditingController();
 
  final TextInputType keyPass = TextInputType.text;
  final TextEditingController _password = TextEditingController();
- DateTime backbuttonpressedTime;
 
   String mesg;
   DatabaseService dataService = new DatabaseService();
@@ -37,7 +35,6 @@ class _LoginScreenState extends State<LoginScreen> {
     SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom]);
     super.initState();
   }
-
 Widget buildForgetPassword(){
   return Container(
     alignment: Alignment.centerRight,
@@ -80,6 +77,22 @@ Widget buildLoginBtn(){
           if (_formKey.currentState.validate()) {
             try{
               FirebaseAuth.instance.signInWithEmailAndPassword(email: _email.text.trim(), password: _password.text.trim())
+              .then((_) => {
+                  FirebaseFirestore
+                  .instance
+                  .collection('users')
+                  .doc(auth.currentUser.uid)
+                  .get()
+                  .then((snapshot) => {
+                      if(snapshot.exists){
+                        _email.clear(), _password.clear(),
+                        if(snapshot.data()['role'] == 'verifier')
+                          Navigator.of(context).pushNamed(AppRoutes.authVerifier)
+                        else
+                          Navigator.of(context).pushNamed(AppRoutes.authPassenger),
+                      }else print('snapshot does not exist'),
+                    }),
+              })
               .catchError((stackTrace){
                 if("[firebase_auth/user-not-found] There is no user record corresponding to this identifier. The user may have been deleted."==stackTrace.toString())
                   mesg = 'User doesnt exist';
@@ -122,7 +135,7 @@ Widget buildLoginBtn(){
                 onPressed: () {
                   setState(() {
                     mesg = null;
-                    dataService.setMessage(null);
+                    
                   });
                 }
               ),
@@ -168,98 +181,77 @@ Widget buildSignUpBtn(){
 }
 
   @override
- 
   Widget build(BuildContext context){
     return WillPopScope(  
-      onWillPop: onWillPop,
+      onWillPop: DatabaseService().onWillPop,
       child: Scaffold(
-        appBar: 
-        AppBar(title: Text(''),backgroundColor: Colors.pinkAccent, elevation: 0,
-          automaticallyImplyLeading: false,
+      appBar: 
+        AppBar(
+          automaticallyImplyLeading: false, 
+          backgroundColor: Colors.pinkAccent,
+          elevation: 0,
+          toolbarHeight: 0,
         ),
-        body: AnnotatedRegion<SystemUiOverlayStyle>(
-          value: SystemUiOverlayStyle.light,
-          child: GestureDetector(
+        resizeToAvoidBottomInset: false,
+        body: GestureDetector(
             child: Stack(
               children: <Widget>[
                 Container(
-                  height: double.infinity,
+                  height: MediaQuery.of(context).size.height,
                   width: double.infinity,
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        Colors.pinkAccent,
-                        Colors.pinkAccent,
-                        Colors.pinkAccent,
-                        Colors.pinkAccent,
-                      ]
-                    )
+                    color: Colors.pinkAccent,
                   ),
-                  child: SingleChildScrollView(
-                    physics: AlwaysScrollableScrollPhysics(),
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 25,
-                      vertical: 120
-                    ),
+                  child:Padding(
+                    padding: const EdgeInsets.all(25),
                     child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      
-                      Material(
-                        color: Colors.transparent,
-                        child:  Image.asset('Images/vacpass-logo2.png', width:120, height: 120),
-                      ),
-                      Text('Vaxipass',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 40,
-                          fontWeight: FontWeight.bold
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          flex: 1,
+                          child: 
+                            Padding(
+                              padding: const EdgeInsets.only(top: 30.0),
+                              child: Material(
+                                color: Colors.transparent,
+                                child:  Image.asset('Images/vacpass-logo2.png', width:120, height: 120),
+                              ),
+                            ),
+                        ),
+                        Text('Vaxipass',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 40,
+                            fontWeight: FontWeight.bold
+                          )
+                        ),
+                        Expanded(
+                          flex: 2,
+                          child: Form(
+                            key: _formKey,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget> [
+                                SizedBox(height: 50),
+                                CustomTextField(_email,keyEmail,'Email address', 'email', false),
+                                SizedBox(height: 20),
+                                CustomTextField(_password,keyPass,'Password', 'password', true),
+                                buildForgetPassword(),
+                                buildLoginBtn(),
+                                buildSignUpBtn(),  
+                              ],
+                            )
+                          ),
                         )
-                      ),
-                      Form(
-                        key: _formKey,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget> [
-                            SizedBox(height: 50),
-                            CustomTextField(_email,keyEmail,'Email address', 'email', false),
-                            SizedBox(height: 20),
-                            CustomTextField(_password,keyPass,'Password', 'password', true),
-                            buildForgetPassword(),
-                            buildLoginBtn(),
-                            buildSignUpBtn(),  
-                        ],
-                        )
-                     )
-                    ],
-                  )
+                      ],
+                     ),
                   )
                 ),
                 showAlert(),
               ],
             )
           )
-        )
       ),
     );
   }
-  Future<bool> onWillPop() async {
-    DateTime currentTime = DateTime.now();
-    bool backButton = backbuttonpressedTime == null ||
-      currentTime.difference(backbuttonpressedTime) > Duration(seconds: 2);
-    if(backButton){
-      backbuttonpressedTime = currentTime;
-      Fluttertoast.showToast(
-        msg: 'Double tap to exit the app',
-        backgroundColor: Colors.grey,
-        textColor: Colors.white
-      );
-      return false;
-    }
-    return true;
-  }
-
 }
-   
