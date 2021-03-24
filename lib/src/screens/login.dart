@@ -1,5 +1,7 @@
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+// ignore: unused_import
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -22,7 +24,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
  final TextInputType keyEmail = TextInputType.emailAddress;
  final TextEditingController _email = TextEditingController();
-
+  final auth = FirebaseAuth.instance;
  final TextInputType keyPass = TextInputType.text;
  final TextEditingController _password = TextEditingController();
  DateTime backbuttonpressedTime;
@@ -80,7 +82,22 @@ Widget buildLoginBtn(){
           if (_formKey.currentState.validate()) {
             try{
               FirebaseAuth.instance.signInWithEmailAndPassword(email: _email.text.trim(), password: _password.text.trim())
-              .catchError((stackTrace){
+               .then((_) => {
+           FirebaseFirestore
+          .instance
+          .collection('users')
+          .doc(auth.currentUser.uid)
+          .get()
+          .then((snapshot) => {
+              if(snapshot.exists){
+                _email.clear(), _password.clear(),
+                if(snapshot.data()['role'] == 'verifier')
+                  Navigator.of(context).pushNamed(AppRoutes.authVerifier)
+                else
+                  Navigator.of(context).pushNamed(AppRoutes.authPassenger),
+              }else print('snapshot does not exist'),
+            }),
+      }).catchError((stackTrace){
                 if("[firebase_auth/user-not-found] There is no user record corresponding to this identifier. The user may have been deleted."==stackTrace.toString())
                   mesg = 'User doesnt exist';
                 if("[firebase_auth/wrong-password] The password is invalid or the user does not have a password."==stackTrace.toString())
@@ -122,7 +139,7 @@ Widget buildLoginBtn(){
                 onPressed: () {
                   setState(() {
                     mesg = null;
-                    dataService.setMessage(null);
+                    
                   });
                 }
               ),
