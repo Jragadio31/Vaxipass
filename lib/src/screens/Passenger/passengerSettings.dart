@@ -11,20 +11,19 @@ import 'package:vacpass_app/src/route.dart';
 
 
 
-class SettingsVerifier extends StatefulWidget{
+class PassengerSettings extends StatefulWidget{
   @override 
   SettingsView createState() => SettingsView();
  
 }
 
-class SettingsView extends State<SettingsVerifier>{
+class SettingsView extends State<PassengerSettings>{
  Map data;
  final db = FirebaseFirestore.instance;
  final auth = FirebaseAuth.instance;
  
   @override 
   Widget build(BuildContext context){
-    final size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
           automaticallyImplyLeading: false, 
@@ -42,10 +41,8 @@ class SettingsView extends State<SettingsVerifier>{
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                      Expanded(
-                       flex: 5,
+                       flex: 4,
                        child: SizedBox(
-                        height: size.height / 3,
-                        width: double.infinity,
                         child: Carousel(
                           dotSize: 4.0,
                           dotSpacing: 15.0,
@@ -108,7 +105,7 @@ class SettingsView extends State<SettingsVerifier>{
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 TextButton(
-                                  onPressed: () => Navigator.of(context).pushNamed(AppRoutes.authVerifierPass), 
+                                  onPressed: () => Navigator.of(context).pushNamed(AppRoutes.authPassengerPass), 
                                   child: Text( 'Change Password', style: GoogleFonts.poppins(textStyle: TextStyle(color: Colors.grey[600],fontSize: 16),)),
                                 )
                               ],

@@ -27,6 +27,7 @@ class ProfileView extends State<Profile>{
 
   @override
   Widget build(BuildContext context){
+    final size = MediaQuery.of(context).size;
     return 
       Container(
         child: 
@@ -50,48 +51,50 @@ class ProfileView extends State<Profile>{
                       backgroundColor: Colors.white,
                       elevation: 0,
                     ),
-                  body: 
+                  body:  
                     SafeArea( 
                       child: LayoutBuilder(
                         builder: (context, constrainst){ 
                           return ListView(
                             children: [
-                              SizedBox(height: 160, child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [imageProfile()],),),
+                              SizedBox(height: size.height /4, child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [imageProfile()],),),
                               Column(
-                                children: [
-                                  userInformation(data['F_name']+' '+data['L_name'],' Name'),
-                                  userInformation(data['Address'], ' Address'),
-                                  userInformation(data['M_Brand'], ' Manufacturer'),
-                                  userInformation(data['Brand_name'], ' Brand name'),
-                                  userInformation(data['Brand_number'].toString(), ' Brand number'),
-                                  userInformation(convertDate(data['Date_of_Vaccination']), ' Date vaccined'),
-                                  userInformation(data['Placed_vacined'], ' Place Vaccined'),
-                                  userInformation(data['Physician_name'], ' Physician'),
-                                  userInformation(data['License_no'], ' License no.'),
-                                  userInformation(convertDate(data['RT_PCR_Date']), ' Last RT-PCR'),
-                                  SizedBox(height: 20),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center, 
-                                    children: [
-                                      SizedBox(
-                                        width: 200,
-                                        height: 40,
-                                        child:
-                                          ElevatedButton(
-                                            style:
-                                              ButtonStyle(
-                                                backgroundColor: MaterialStateProperty.all<Color>(Colors.pinkAccent),
-                                            ),
-                                            onPressed: (){Navigator.of(context).push(MaterialPageRoute(builder: (context) => Update(data)));}, 
-                                            child: 
-                                              Text('Update Profile',
-                                                style: GoogleFonts.poppins(textStyle: TextStyle(color: Colors.white,fontSize: 13),),)
-                                            ), 
+                                  children: [
+                                    userInformation(data['F_name']+' '+data['L_name'],' Name'),
+                                    userInformation(data['Address'], ' Address'),
+                                    userInformation(data['M_Brand'], ' Manufacturer'),
+                                    userInformation(data['Brand_name'], ' Brand name'),
+                                    userInformation(data['Brand_number'].toString(), ' Brand number'),
+                                    userInformation(convertDate(data['Date_of_Vaccination']), ' Date vaccined'),
+                                    userInformation(data['Placed_vacined'], ' Place Vaccined'),
+                                    userInformation(data['Physician_name'], ' Physician'),
+                                    userInformation(data['License_no'], ' License no.'),
+                                    userInformation(convertDate(data['RT_PCR_Date']), ' Last RT-PCR'),
+                                    Padding(
+                                      padding: const EdgeInsets.only(bottom:20.0),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.center, 
+                                        children: [
+                                          SizedBox(
+                                            width: 200,
+                                            height: 40,
+                                            child:
+                                              ElevatedButton(
+                                                style:
+                                                  ButtonStyle(
+                                                    backgroundColor: MaterialStateProperty.all<Color>(Colors.pinkAccent),
+                                                ),
+                                                onPressed: (){Navigator.of(context).push(MaterialPageRoute(builder: (context) => Update(data)));}, 
+                                                child: 
+                                                  Text('Update Profile',
+                                                    style: GoogleFonts.poppins(textStyle: TextStyle(color: Colors.white,fontSize: 13),),)
+                                                ), 
+                                          ),
+                                        ],
                                       ),
-                                    ],
-                                  )
-                                ],
-                              ),
+                                    )
+                                  ],
+                                ),
                             ],
                           );
                         }
@@ -150,7 +153,7 @@ class ProfileView extends State<Profile>{
         CircleAvatar( 
           radius: 75,
           backgroundImage: _imageFile == null?
-          AssetImage('Images/dasha.png'):
+          AssetImage('Images/user.png'):
           FileImage(File(_imageFile.path)),
         ),
         Positioned(bottom: 20, 

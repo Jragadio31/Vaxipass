@@ -2,7 +2,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import './Services/CustomTextField.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'Services/ValidatorFunction.dart';
 import 'Services/firebaseservice.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../route.dart';
@@ -18,13 +19,13 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
 
-  final auth = FirebaseAuth.instance;
+ final auth = FirebaseAuth.instance;
  final TextInputType keyEmail = TextInputType.emailAddress;
  final TextEditingController _email = TextEditingController();
-  final auth = FirebaseAuth.instance;
- final TextInputType keyPass = TextInputType.text;
- final TextEditingController _password = TextEditingController();
 
+ final TextInputType keyPass = TextInputType.emailAddress;
+ final TextEditingController _password = TextEditingController();
+  bool obs = true;
   String mesg;
   DatabaseService dataService = new DatabaseService();
   final _formKey = GlobalKey<FormState>();
@@ -36,42 +37,25 @@ class _LoginScreenState extends State<LoginScreen> {
     super.initState();
   }
 Widget buildForgetPassword(){
-  return Container(
-    alignment: Alignment.centerRight,
+  return 
     // ignore: deprecated_member_use
-    child: FlatButton(
-      onPressed: () => Navigator.of(context).pushNamed(AppRoutes.authForgetPassword),
-      padding: EdgeInsets.only(right: 0),
-      child: Text(
-        'Forget Password?',
-        style: TextStyle(
-          color: Colors.white,
-          fontWeight: FontWeight.bold
-        )
-      )
-      )
-  );
+    FlatButton(
+      child: Text( 'Forget Password?', style: GoogleFonts.poppins(textStyle: TextStyle(color: Colors.grey,fontSize: 16),)),
+      onPressed: () => Navigator.of(context).popAndPushNamed(AppRoutes.authForgetPassword),
+      hoverColor: Colors.red ,
+    );
 }
 
 Widget buildLoginBtn(){
-  return Container(
-    padding: EdgeInsets.symmetric( vertical: 25),
-    width: double.infinity,
-    child: 
-      // ignore: deprecated_member_use
-      RaisedButton(
-        padding: EdgeInsets.all(12.0),
+  return 
+    // ignore: deprecated_member_use
+    RaisedButton(
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(30)
+          borderRadius: BorderRadius.circular(5)
         ),
-        color: Colors.white,
+        color: Colors.pinkAccent,
         child: Text(
-          'Login',
-          style: TextStyle(
-            color: Colors.pinkAccent,
-            fontSize: 18,
-            fontWeight: FontWeight.bold
-          ),
+          'Login', style: GoogleFonts.poppins(textStyle: TextStyle(color: Colors.white,fontSize: 16,fontWeight: FontWeight.w600),)
         ),
         onPressed: (){
           if (_formKey.currentState.validate()) {
@@ -87,9 +71,9 @@ Widget buildLoginBtn(){
                       if(snapshot.exists){
                         _email.clear(), _password.clear(),
                         if(snapshot.data()['role'] == 'verifier')
-                          Navigator.of(context).pushNamed(AppRoutes.authVerifier)
+                          Navigator.of(context).popAndPushNamed(AppRoutes.authVerifier)
                         else
-                          Navigator.of(context).pushNamed(AppRoutes.authPassenger),
+                          Navigator.of(context).popAndPushNamed(AppRoutes.authPassenger),
                       }else print('snapshot does not exist'),
                     }),
               })
@@ -105,12 +89,10 @@ Widget buildLoginBtn(){
             }
           }
         },
-    )
-  );
+    );
 }
 
   Widget showAlert() {
-    
     if ( mesg != null) {
       return Container(
         color: Colors.amberAccent,
@@ -135,7 +117,6 @@ Widget buildLoginBtn(){
                 onPressed: () {
                   setState(() {
                     mesg = null;
-                    
                   });
                 }
               ),
@@ -150,108 +131,105 @@ Widget buildLoginBtn(){
   }
 
 Widget buildSignUpBtn(){
-  return GestureDetector(
-    onTap: () {
-        Navigator.of(context).pushNamed(AppRoutes.authRegister);
-    },
-    child: RichText(
-      text: TextSpan(
-        children: [
-          TextSpan(
-            text: 'Don\'t have an account yet? ',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 18,
-              fontWeight: FontWeight.w500
-            ),
-          ),
-          TextSpan(
-              text: 'Sign Up',
-              style: TextStyle(
-                decoration: TextDecoration.underline,
-                color: Colors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.bold
-              )
-            )
-        ]
+  return 
+    // ignore: deprecated_member_use
+    RaisedButton(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(5)
       ),
-    )
-  );
+      color: Colors.green[700],
+      child: Text('Create New Vaxipass Account', style: GoogleFonts.poppins(textStyle: TextStyle(color: Colors.white,fontSize: 16,fontWeight: FontWeight.w600),)),
+      onPressed: (){ Navigator.of(context).popAndPushNamed(AppRoutes.authRegister); }
+    );
 }
 
   @override
   Widget build(BuildContext context){
-    return WillPopScope(  
-      onWillPop: DatabaseService().onWillPop,
-      child: Scaffold(
-      appBar: 
-        AppBar(
-          automaticallyImplyLeading: false, 
-          backgroundColor: Colors.pinkAccent,
-          elevation: 0,
-          toolbarHeight: 0,
-        ),
-        resizeToAvoidBottomInset: false,
-        body: GestureDetector(
-            child: Stack(
-              children: <Widget>[
-                Container(
-                  height: MediaQuery.of(context).size.height,
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: Colors.pinkAccent,
-                  ),
-                  child:Padding(
-                    padding: const EdgeInsets.all(25),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          flex: 1,
-                          child: 
-                            Padding(
-                              padding: const EdgeInsets.only(top: 30.0),
-                              child: Material(
-                                color: Colors.transparent,
-                                child:  Image.asset('Images/vacpass-logo2.png', width:120, height: 120),
+    final size = MediaQuery.of(context).size;
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      appBar: AppBar(automaticallyImplyLeading: false, backgroundColor: Colors.transparent, elevation: 0, toolbarHeight: 0,),
+      body: 
+        Builder(builder: (context){
+          return SafeArea(
+            child: Container(
+              height: size.height,
+              decoration: BoxDecoration(color: Colors.white),
+              alignment: Alignment.topCenter,
+              child: Column(
+                children:<Widget>[
+                  showAlert(),
+                  SizedBox(height:size.height * 0.02),
+                  Image.asset('Images/logo.png',height: size.height * 0.16,),
+                  SizedBox(height:size.height * 0.02),
+                  Text('Vaxipass', style: GoogleFonts.poppins(textStyle: TextStyle(color: Colors.pinkAccent,fontSize: 30),) ),
+                  Form(
+                    key: _formKey,
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 30,right: 30,top: 30),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                            TextFormField(
+                              controller: _email,
+                              style: TextStyle(
+                                color: Colors.black87,
                               ),
+                              decoration: InputDecoration(
+                                contentPadding: EdgeInsets.only(top: 14),
+                                prefixIcon: Icon(Icons.email),
+                                hintText: 'Email Address',
+                                hintStyle: TextStyle(
+                                  color: Colors.black38
+                                )
+                              ),
+                              validator: (value) {
+                                return ValidatorFunction('email').validate(value);
+                              },
                             ),
-                        ),
-                        Text('Vaxipass',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 40,
-                            fontWeight: FontWeight.bold
-                          )
-                        ),
-                        Expanded(
-                          flex: 2,
-                          child: Form(
-                            key: _formKey,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget> [
-                                SizedBox(height: 50),
-                                CustomTextField(_email,keyEmail,'Email address', 'email', false),
-                                SizedBox(height: 20),
-                                CustomTextField(_password,keyPass,'Password', 'password', true),
-                                buildForgetPassword(),
-                                buildLoginBtn(),
-                                buildSignUpBtn(),  
-                              ],
-                            )
+                          SizedBox(height: size.height * 0.03 ),
+                            TextFormField(
+                              obscureText: obs,
+                              controller: _password,
+                              style: TextStyle(
+                                color: Colors.black87,
+                              ),
+                              decoration: InputDecoration(
+                                contentPadding: EdgeInsets.only(top: 14),
+                                prefixIcon: Icon(Icons.lock),
+                                hintText: 'Password',
+                                hintStyle: TextStyle(
+                                  color: Colors.black38
+                                ),
+                                suffixIcon: IconButton(
+                                  onPressed:  (){setState(() {obs = ! obs; });},
+                                  icon: obs ? Icon(Icons.visibility_off) : Icon(Icons.visibility)
+                                ) ,
+                              ),
+                              validator: (value) {
+                                return ValidatorFunction('password').validate(value);
+                              },
+                            ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 30),
+                            child: SizedBox(
+                              width: size.width,
+                              height: 40,
+                              child: buildLoginBtn(),
+                            ),
                           ),
-                        )
-                      ],
-                     ),
-                  )
-                ),
-                showAlert(),
-              ],
+                          // ignore: deprecated_member_use
+                          buildForgetPassword(),
+                          buildSignUpBtn(),
+                        ],
+                      ),
+                    )
+                  ),
+                ]
+              ),
             )
-          )
-      ),
+          );
+        }),
     );
   }
 }

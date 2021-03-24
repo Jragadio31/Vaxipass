@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import '../../route.dart';
 import 'userclass.dart';
 
 class DatabaseService {
@@ -17,7 +16,6 @@ class DatabaseService {
 
    void resetPassword( BuildContext context, _email){
     auth.sendPasswordResetEmail(email: _email);
-    Navigator.of(context).pop();
   }
   
   void signOut(){

@@ -20,7 +20,7 @@ class _VerifierScreen extends State<VerifierNav> {
   List<Widget> _widgetOptions = <Widget>[
     Verifier(),
     History(),
-    Settings(),
+    SettingsVerifier(),
   ];
 
   

@@ -1,4 +1,7 @@
+
 import 'package:flutter/material.dart';
+import 'package:vacpass_app/src/screens/Passenger/passengerchange.dart';
+import 'package:vacpass_app/src/screens/Verifier/verifierchange.dart';
 import 'screens/Services/fotgotpassword.dart';
 import 'screens/login.dart';
 import 'screens/register.dart';
@@ -12,7 +15,9 @@ class AppRoutes{
   static const String authRegister = '/auth-Register';
   static const String authVerifier = '/auth-Verifier';
   static const String authPassenger = '/auth-Passenger';
-   static const String authForgetPassword = '/auth-ForgetPassword';
+  static const String authForgetPassword = '/auth-ForgetPassword';
+  static const String authPassengerPass = '/auth-ChangePassengerPass';
+  static const String authVerifierPass = '/auth-ChangeVerifierPass';
 
   static Map<String, WidgetBuilder> define(){
     return{
@@ -21,6 +26,8 @@ class AppRoutes{
       authVerifier: (context) => VerifierNav(),
       authPassenger: (context) => Passenger(),
       authForgetPassword: (context) => ForgetPasswordScreen(),
+      authPassengerPass: (context) => ChangePasswordPassenger(),
+      authVerifierPass: (context) => ChangePasswordVerifier(),
     };
   }
 }

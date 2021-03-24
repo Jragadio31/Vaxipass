@@ -1,18 +1,19 @@
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
-import './FirebaseService.dart';
-import '../../route.dart';
-import 'ValidatorFunction.dart';
+import 'package:vacpass_app/src/screens/Services/ValidatorFunction.dart';
+import 'package:vacpass_app/src/screens/Services/firebaseservice.dart';
 
 
-class ForgetPasswordScreen extends StatefulWidget {
+class ChangePasswordVerifier extends StatefulWidget {
   @override
-  _ForgetPasswordScreenState createState() => _ForgetPasswordScreenState();
+  _ForgetPasswordScreen createState() => _ForgetPasswordScreen();
 }
 
 
-class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
+class _ForgetPasswordScreen extends State<ChangePasswordVerifier> {
 
   final _formKey = GlobalKey<FormState>();
   
@@ -21,7 +22,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
  final TextEditingController _email = TextEditingController();
 
  final TextInputType keyPass = TextInputType.text;
-//  TextEditingController _password = TextEditingController();
+ final auth = FirebaseAuth.instance;
 
 
 
@@ -37,7 +38,7 @@ Widget buildResetPasswordBtn(){
         onPressed: (){
           if (_formKey.currentState.validate()) {
             DatabaseService().resetPassword(context,_email.text);
-            Navigator.of(context).popAndPushNamed(AppRoutes.authLogin);
+            Navigator.of(context).pop();
           }
         },
     );
@@ -54,7 +55,7 @@ Widget buildCancelBtn(){
           ),
         child: Text( 'Cancel', style: GoogleFonts.poppins(textStyle: TextStyle(color: Colors.white,fontSize: 16,fontWeight: FontWeight.w600),)),
         onPressed: (){
-          Navigator.of(context).popAndPushNamed(AppRoutes.authLogin);
+          Navigator.of(context).pop();
         },
     );
 }
@@ -64,6 +65,8 @@ Widget buildCancelBtn(){
   @override
   Widget build(BuildContext context){
     final size = MediaQuery.of(context).size;
+    _email.text = auth.currentUser.email;
+
     return Scaffold(
       body: GestureDetector(
           child: Stack(
@@ -83,8 +86,8 @@ Widget buildCancelBtn(){
                   child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    Text('Password Recovery ?', style: GoogleFonts.poppins(textStyle: TextStyle(color: Colors.pinkAccent,fontSize: 28,fontWeight: FontWeight.w600),)),
-                    Text('After you fill up the email text filed \n click Send Request and a link will be\n sent to your  email where you can\n reset your password.',style: TextStyle(color: Colors.grey[600],fontSize: 13),textAlign: TextAlign.center,),
+                    Text('Change Password', style: GoogleFonts.poppins(textStyle: TextStyle(color: Colors.pinkAccent,fontSize: 28,fontWeight: FontWeight.w600),)),
+                    Text(' \n A link will be sent to your email\n just click the link and it will redirect\n to change your password\nthis process is part of our security\nto prevent someone from stealing \nyour account.',style: TextStyle(color: Colors.grey[600],fontSize: 13),textAlign: TextAlign.center,),
                     Form(
                       key: _formKey,
                       child: Column(

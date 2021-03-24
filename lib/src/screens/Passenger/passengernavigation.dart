@@ -1,8 +1,8 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:vacpass_app/src/screens/Passenger/passengerSettings.dart';
 import 'package:vacpass_app/src/screens/Services/firebaseservice.dart';
-import '../Verifier/verifierSettings.dart';
 import 'dashboardpassenger.dart';
 import 'profilepassenger.dart';
 import 'historypassenger.dart';
@@ -19,7 +19,7 @@ class _PassScreen extends State<Passenger> {
     Dashboard(),
     HistoryPassenger(),
     Profile(),
-    Settings(),
+    PassengerSettings(),
   ];
 
   @override 

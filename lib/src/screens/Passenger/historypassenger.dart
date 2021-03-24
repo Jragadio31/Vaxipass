@@ -72,7 +72,7 @@ class HistoryView extends State<HistoryPassenger>{
                   backgroundColor: Colors.white,
                   elevation: 0,
                 ),
-              body: Column(
+              body: ListView(
                 children: snapshot.data.docs.map((DocumentSnapshot document) {
                   if(document.data()['Passenger_uid'] == auth.currentUser.uid)
                     return Card(

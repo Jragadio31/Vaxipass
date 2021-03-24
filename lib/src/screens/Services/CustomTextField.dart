@@ -17,64 +17,41 @@ class CustomTextField extends StatefulWidget{
 class CustomInputField extends State<CustomTextField>{
    
   Icon iconStyle(){
-    if(widget.action == 'email') return Icon(Icons.email, color: Colors.purple[300]);
-    if(widget.action == 'password') return Icon(Icons.lock, color: Colors.purple[300]);
-    if(widget.action == 'lastname') return Icon(Icons.person, color: Colors.purple[300]);
-    if(widget.action == 'firstname') return Icon(Icons.person, color: Colors.purple[300]);
-    if(widget.action == 'address') return Icon(Icons.location_city, color: Colors.purple[300]);
-    if(widget.action == 'brandname') return Icon(Icons.branding_watermark, color: Colors.purple[300]);
-    if(widget.action == 'brandnumber') return Icon(Icons.format_list_numbered, color: Colors.purple[300]);
-    if(widget.action == 'physician') return Icon(Icons.local_hospital, color: Colors.purple[300]);
-    if(widget.action == 'placevaccined') return Icon(Icons.add_location, color: Colors.purple[300]);
-    if(widget.action == 'licensenumber') return Icon(Icons.credit_card, color: Colors.purple[300]);
-    if(widget.action == 'manufacturer') return Icon(Icons.business, color: Colors.purple[300]);
+    if(widget.action == 'email') return Icon(Icons.email);
+    if(widget.action == 'password') return Icon(Icons.lock);
+    if(widget.action == 'lastname') return Icon(Icons.person);
+    if(widget.action == 'firstname') return Icon(Icons.person);
+    if(widget.action == 'address') return Icon(Icons.location_city);
+    if(widget.action == 'brandname') return Icon(Icons.branding_watermark);
+    if(widget.action == 'brandnumber') return Icon(Icons.format_list_numbered);
+    if(widget.action == 'physician') return Icon(Icons.local_hospital);
+    if(widget.action == 'placevaccined') return Icon(Icons.add_location);
+    if(widget.action == 'licensenumber') return Icon(Icons.credit_card);
+    if(widget.action == 'manufacturer') return Icon(Icons.business);
     return null;
   }
 
   @override
   Widget build(BuildContext context){
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        // CustomText(this.label),
-        SizedBox(height: 10),
-        Container(
-          alignment: Alignment.centerLeft,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(5),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black26,
-                blurRadius: 6,
-                offset: Offset(0,2),
-              )
-            ]
-          ),
-          height: 60,
-          child: TextFormField(
-            obscureText: widget.obs,
-            controller: widget._controller,
-            validator: (String value){
-              return ValidatorFunction(widget.action).validate(value);
-            },
-            style: TextStyle(
-              color: Colors.black87,
-            ),
-            decoration: InputDecoration(
-              border: InputBorder.none,
-              contentPadding: EdgeInsets.only(top: 14),
-              prefixIcon: iconStyle(),
-              hintText: widget.label,
-              hintStyle: TextStyle(
-                color: Colors.black38
-              ),
-              suffixIcon: widget.action == "password" ? viewIcon() : null,
-            ),
-          ),
-        )
-      ],
-    );
+    return TextFormField(
+    obscureText: widget.obs,
+    controller: widget._controller,
+    style: TextStyle(
+      color: Colors.black87,
+    ),
+    decoration: InputDecoration(
+      contentPadding: EdgeInsets.only(top: 14),
+      prefixIcon: iconStyle(),
+      hintText: widget.label,
+      hintStyle: TextStyle(
+        color: Colors.black38
+      ),
+      suffixIcon: widget.action == "password" ? viewIcon() : null,
+    ),
+    validator: (value) {
+      return ValidatorFunction(widget.action).validate(value);
+    },
+  );
   }
   IconButton viewIcon (){
     return IconButton(

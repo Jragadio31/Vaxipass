@@ -260,7 +260,7 @@ class UpdateScreen extends State<Update>{
         CircleAvatar( 
           radius: 75,
           backgroundImage: _imageFile == null?
-          AssetImage('Images/dasha.png'):
+          AssetImage('Images/user.png'):
           FileImage(File(_imageFile.path)),
         ),
         Positioned(bottom: 20, 

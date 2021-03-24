@@ -21,7 +21,7 @@ import 'src/screens/login.dart';
       MaterialApp(
         title: 'Vacpass',
         routes: AppRoutes.define(),
-        theme: ThemeData(primaryColor: Colors.pinkAccent),
+        theme: ThemeData(primaryColor: Colors.pinkAccent, accentColor: Colors.green[700]),
         home: LoginScreen(),
       );
    }

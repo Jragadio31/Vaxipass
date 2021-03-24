@@ -44,6 +44,8 @@ class DashboardScreen extends State<Dashboard> {
 
       @override
         Widget build(BuildContext context) {
+          final size = MediaQuery.of(context).size;
+          int div = size.height > 1280 ? 3 : 2;
           return Container(
             child: FutureBuilder<DocumentSnapshot> (
               future: db.collection('users').doc(auth.currentUser.uid).get(),
@@ -133,7 +135,7 @@ class DashboardScreen extends State<Dashboard> {
                                                 return Dialog(
                                                   child: Container(
                                                     width: MediaQuery.of(context).size.width / 1.5,
-                                                    height: MediaQuery.of(context).size.height / 3,
+                                                    height: size.height/div,
                                                     child:  Center(
                                                         child: Column(
                                                           mainAxisAlignment: MainAxisAlignment.center,
