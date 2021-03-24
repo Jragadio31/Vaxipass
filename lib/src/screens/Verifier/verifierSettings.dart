@@ -36,110 +36,108 @@ class SettingsView extends State<Settings>{
               alignment: Alignment.center,
               padding: EdgeInsets.only(left: 16, top: 25, right: 16),
               height: MediaQuery.of(context).size.height,
-              child: ListView(
+              child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                     SizedBox(
-                      height: 200.0,
-                      width: double.infinity,
-                      child: Carousel(
-                        dotSize: 4.0,
-                        dotSpacing: 15.0,
-                        dotBgColor: Colors.transparent,
-                        indicatorBgPadding: 5.0,
-                        dotColor: Colors.pink,
-                        dotVerticalPadding: 5.0,
-                        dotPosition: DotPosition.bottomRight,
-                        images: [
-                           InkWell(
-                            onTap: (){
-                              
-                            },
-                            child: Image.asset('Images/ads.png', fit: BoxFit.cover)
-                           ),
-                            InkWell(
-                            onTap: (){
-                              
-                            },
-                            child: Image.asset('Images/download.jpg', fit: BoxFit.cover)
-                           ),
-                           InkWell(
-                            onTap: (){
-                              
-                            },
-                            child: Image.asset('Images/vacine.jpg', fit: BoxFit.cover)
-                           )
-                        ],
-                      )
-                    ),
-                    SizedBox(
-                        height: 40,
-                      ),
-                     Row(
-                      children: [
-                        Icon(
-                          Icons.person,
-                          color: Colors.pinkAccent,
-                        ),
-                        SizedBox(
-                          width: 8,
-                        ),
-                        Text(
-                          "Account",
-                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.pink),
-                        ),
-                      ],
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      
-                      buildAccountOptionRow(context, "Change password"),
-                      SizedBox(
-                        height: 30,
-                      ),
-                       Row(
-                      children: [
-                        Icon(
-                          Icons.help,
-                          color: Colors.pinkAccent,
-                        ),
-                        SizedBox(
-                          width: 8,
-                        ),
-                        Text(
-                          "Help",
-                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.pink),
-                        ),
-                      ],
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      buildAccountOptionRow(context, "frequently asked question"),
-                      buildAccountOptionRow(context, "Privacy and Security"),
-                      buildAccountOptionRow(context, "About us"),
-                      SizedBox(height: 100),
-                      Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                    SizedBox(
-                                    width:  MediaQuery.of(context).size.width/1.5,
-                                    height: 40,
-                                    child: 
-                                    // ignore: deprecated_member_use
-                                    RaisedButton(
-                                      color: Colors.pinkAccent,
-                                      onPressed: (){
-                                        auth.signOut();
-                                        Navigator.of(context).popAndPushNamed(AppRoutes.authLogin);
-                                      },
-                                      child: Text('Sign out', style: TextStyle(color: Colors.white),),
-                                    ),
-                                  )
-                              ]
-                            )
+                     Expanded(
+                       flex: 5,
+                       child: SizedBox(
+                        height: 200.0,
+                        width: double.infinity,
+                        child: Carousel(
+                          dotSize: 4.0,
+                          dotSpacing: 15.0,
+                          dotBgColor: Colors.transparent,
+                          indicatorBgPadding: 5.0,
+                          dotColor: Colors.pink,
+                          dotVerticalPadding: 5.0,
+                          dotPosition: DotPosition.bottomRight,
+                          images: [
+                             InkWell(
+                              onTap: (){
+                                
+                              },
+                              child: Image.asset('Images/ads.png', fit: BoxFit.cover)
+                             ),
+                              InkWell(
+                              onTap: (){
+                                
+                              },
+                              child: Image.asset('Images/download.jpg', fit: BoxFit.cover)
+                             ),
+                             InkWell(
+                              onTap: (){
+                                
+                              },
+                              child: Image.asset('Images/vacine.jpg', fit: BoxFit.cover)
+                             )
+                          ],
                         )
+                    ),
+                     ),
+                     Expanded(
+                       child: Row(
+                        children: [
+                          Icon(
+                            Icons.person,
+                            color: Colors.pinkAccent,
+                          ),
+                          SizedBox(
+                            width: 8,
+                          ),
+                          Text(
+                            "Account",
+                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.pink),
+                          ),
+                        ],
+                        ),
+                     ),
+                      Expanded(child: buildAccountOptionRow(context, "Change password")),
+                       Expanded(
+                         flex: 1,
+                         child: Row(
+                          children: [
+                            Icon(
+                              Icons.help,
+                              color: Colors.pinkAccent,
+                            ),
+                            SizedBox(
+                              width: 8,
+                            ),
+                            Text(
+                              "Help",
+                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.pink),
+                            ),
+                          ],
+                      ),
+                       ),
+                      Expanded(child: buildAccountOptionRow(context, "frequently asked question")),
+                      Expanded(child: buildAccountOptionRow(context, "Privacy and Security")),
+                      Expanded(child: buildAccountOptionRow(context, "About us")),
+                      Expanded(
+                        flex: 2,
+                        child: Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                      SizedBox(
+                                      width:  MediaQuery.of(context).size.width/1.5,
+                                      height: 40,
+                                      child: 
+                                      // ignore: deprecated_member_use
+                                      RaisedButton(
+                                        color: Colors.pinkAccent,
+                                        onPressed: (){
+                                          auth.signOut();
+                                          Navigator.of(context).popAndPushNamed(AppRoutes.authLogin);
+                                        },
+                                        child: Text('Sign out', style: TextStyle(color: Colors.white),),
+                                      ),
+                                    )
+                                ]
+                              )
+                          ),
+                      )
                     ],
               ),
               ),
